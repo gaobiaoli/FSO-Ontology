@@ -1,0 +1,71 @@
+@prefix fs:   <https://example.org/fire-ops#> .
+@prefix bot:  <https://w3id.org/bot#> .
+
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+<https://example.org/fire-ops/function>
+    a owl:Ontology .
+
+
+# ============================================================
+# Functional Context
+# ============================================================
+
+fs:FunctionalEntity
+    a owl:Class .
+
+fs:EgressNetwork
+    a owl:Class .
+
+fs:EgressFunctionalEntity
+    a owl:Class ;
+    rdfs:subClassOf fs:FunctionalEntity .
+
+fs:EgressNode
+    a owl:Class ;
+    rdfs:subClassOf fs:EgressFunctionalEntity .
+
+fs:EgressSegment
+    a owl:Class ;
+    rdfs:subClassOf fs:EgressFunctionalEntity .
+
+fs:EgressExit
+    a owl:Class ;
+    rdfs:subClassOf fs:EgressNode .
+
+
+# ============================================================
+# Network relationships
+# ============================================================
+
+fs:hasNode
+    a owl:ObjectProperty ;
+    rdfs:domain fs:EgressNetwork ;
+    rdfs:range fs:EgressNode .
+
+fs:hasSegment
+    a owl:ObjectProperty ;
+    rdfs:domain fs:EgressNetwork ;
+    rdfs:range fs:EgressSegment .
+
+fs:fromNode
+    a owl:ObjectProperty ;
+    rdfs:domain fs:EgressSegment ;
+    rdfs:range fs:EgressNode .
+
+fs:toNode
+    a owl:ObjectProperty ;
+    rdfs:domain fs:EgressSegment ;
+    rdfs:range fs:EgressNode .
+
+
+# ============================================================
+# Physical-functional mapping
+# ============================================================
+
+fs:realizedBy
+    a owl:ObjectProperty ;
+    rdfs:domain fs:FunctionalEntity .

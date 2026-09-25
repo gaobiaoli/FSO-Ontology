@@ -1,0 +1,85 @@
+@prefix fs:   <https://example.org/fire-ops#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+<https://example.org/fire-ops/artifact>
+    a owl:Ontology .
+
+
+# ============================================================
+# Source artifacts
+# ============================================================
+
+fs:SourceArtifact
+    a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+fs:IFCModelArtifact
+    a owl:Class ;
+    rdfs:subClassOf fs:SourceArtifact .
+
+
+# ============================================================
+# Source object references
+# ============================================================
+
+fs:SourceObjectReference
+    a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+fs:IFCObjectReference
+    a owl:Class ;
+    rdfs:subClassOf fs:SourceObjectReference .
+
+
+# ============================================================
+# Entity-source relationships
+# ============================================================
+
+fs:hasSourceReference
+    a owl:ObjectProperty ;
+    rdfs:range fs:SourceObjectReference .
+
+fs:referencesArtifact
+    a owl:ObjectProperty ;
+    rdfs:domain fs:SourceObjectReference ;
+    rdfs:range fs:SourceArtifact .
+
+
+# ============================================================
+# Object identifiers
+# ============================================================
+
+fs:sourceObjectIdentifier
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:SourceObjectReference ;
+    rdfs:range xsd:string .
+
+fs:ifcGlobalId
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:IFCObjectReference ;
+    rdfs:range xsd:string .
+
+
+# ============================================================
+# Artifact metadata
+# ============================================================
+
+fs:artifactLocation
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:SourceArtifact ;
+    rdfs:range xsd:anyURI .
+
+fs:sha256
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:SourceArtifact ;
+    rdfs:range xsd:string .
+
+fs:ifcSchemaVersion
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:IFCModelArtifact ;
+    rdfs:range xsd:string .

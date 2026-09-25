@@ -1,0 +1,97 @@
+@prefix fs:   <https://example.org/fire-ops#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/fire-ops/state>
+    a owl:Ontology .
+
+
+# ============================================================
+# Operational State
+# ============================================================
+
+fs:OperationalState
+    a owl:Class .
+
+fs:OccupancyState
+    a owl:Class ;
+    rdfs:subClassOf fs:OperationalState .
+
+fs:ObstructionState
+    a owl:Class ;
+    rdfs:subClassOf fs:OperationalState .
+
+
+# ============================================================
+# State Snapshot
+# ============================================================
+
+fs:StateSnapshot
+    a owl:Class .
+
+
+# ============================================================
+# State relationships
+# ============================================================
+
+fs:aboutEntity
+    a owl:ObjectProperty ;
+    rdfs:domain fs:OperationalState .
+
+fs:supportedByObservation
+    a owl:ObjectProperty ;
+    rdfs:domain fs:OperationalState ;
+    rdfs:range sosa:Observation .
+
+fs:hasState
+    a owl:ObjectProperty ;
+    rdfs:domain fs:StateSnapshot ;
+    rdfs:range fs:OperationalState .
+
+fs:hasObstructingObject
+    a owl:ObjectProperty ;
+    rdfs:domain fs:ObstructionState .
+
+fs:widthReduction
+    a owl:ObjectProperty ;
+    rdfs:domain fs:ObstructionState ;
+    rdfs:range qudt:QuantityValue .
+
+# ============================================================
+# State values
+# ============================================================
+
+fs:occupantCount
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:OccupancyState ;
+    rdfs:range xsd:nonNegativeInteger .
+
+fs:obstructionPresent
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:ObstructionState ;
+    rdfs:range xsd:boolean .
+
+
+# ============================================================
+# Temporal properties
+# ============================================================
+
+fs:validFrom
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:OperationalState ;
+    rdfs:range xsd:dateTime .
+
+fs:validUntil
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:OperationalState ;
+    rdfs:range xsd:dateTime .
+
+fs:snapshotTime
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:StateSnapshot ;
+    rdfs:range xsd:dateTime .

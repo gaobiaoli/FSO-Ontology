@@ -1,0 +1,19 @@
+@prefix fs:   <https://example.org/fire-ops#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+
+<https://example.org/fire-ops/observation>
+    a owl:Ontology .
+
+
+# ============================================================
+# Observed properties
+# ============================================================
+
+fs:occupantCountProperty
+    a sosa:Property .
+
+fs:obstructionPresenceProperty
+    a sosa:Property .
