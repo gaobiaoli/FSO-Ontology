@@ -24,24 +24,34 @@ fs:OccupancyState
 
 fs:ObstructionState
     a owl:Class ;
-    rdfs:subClassOf fs:OperationalState .
-
+    rdfs:subClassOf fs:OperationalState ;
+    rdfs:comment
+        "描述指定物理空间或局部区域在特定时间和情景下的受阻情况。该状态可以涉及一个或多个致障对象；障碍存在不等同于完全不可通行。"@zh .
 
 # ============================================================
 # State Snapshot
 # ============================================================
 
 fs:StateSnapshot
-    a owl:Class .
+    a owl:Class ;
+    rdfs:comment
+        "组织同一情景、同一参考时刻采用的一组运行状态。快照可以描述实际情况或假设方案，不自动表示这些状态已被现场观测证实。"@zh .
 
-
+fs:scenarioId
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:StateSnapshot ;
+    rdfs:range xsd:string ;
+    rdfs:comment
+        "标识快照所属的情景。同一情景可以包含多个时刻的快照；不同假设方案使用不同标识。标识在本项目内保持唯一且含义稳定。"@zh .
 # ============================================================
 # State relationships
 # ============================================================
 
 fs:aboutEntity
     a owl:ObjectProperty ;
-    rdfs:domain fs:OperationalState .
+    rdfs:domain fs:OperationalState ;
+    rdfs:comment
+        "关联状态所描述的对象。例如，人数状态关联人数所在的物理空间，障碍状态关联受阻的物理空间或局部区域。"@zh .
 
 fs:supportedByObservation
     a owl:ObjectProperty ;
@@ -55,12 +65,30 @@ fs:hasState
 
 fs:hasObstructingObject
     a owl:ObjectProperty ;
-    rdfs:domain fs:ObstructionState .
+    rdfs:domain fs:ObstructionState ;
+    rdfs:comment
+        "关联在该状态所对应的时间和情景下造成阻碍的物理对象。允许关联多个对象；未关联对象不表示没有障碍，也可能是对象身份尚未确定。"@zh .
 
 fs:clearWidthReduction
     a owl:ObjectProperty ;
     rdfs:domain fs:ObstructionState ;
-    rdfs:range qudt:QuantityValue .
+    rdfs:range qudt:QuantityValue ;
+    rdfs:comment
+        "在指定截面上，由该状态中的障碍造成的几何通行净宽减少量，相对于同一截面的基准净宽确定。表示所有相关障碍的共同影响，不等同于障碍物自身宽度，也不包含疏散模型额外采用的侧边留量。"@zh .
+
+fs:baselineClearWidth
+    a owl:ObjectProperty ;
+    rdfs:domain fs:ObstructionState ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:comment
+        "用于比较该障碍状态的基准几何通行净宽：在同一截面、其他物理条件相同且移除该状态所涉及障碍的情况下确定。它不是 IFC 门名义宽度，也不是法规要求的最小宽度。"@zh .
+
+fs:obstructionGeometryReference
+    a owl:ObjectProperty ;
+    rdfs:domain fs:ObstructionState ;
+    rdfs:range fs:SourceObjectReference ;
+    rdfs:comment
+        "关联外部文件中描述该状态下障碍空间占据情况的几何记录。记录应包含障碍轮廓及其空间定位，并明确坐标基准和单位。几何对应当前状态的时间与情景，不默认采用物体在原始 IFC 中的位置。"@zh .
 
 # ============================================================
 # State values
@@ -94,4 +122,13 @@ fs:validUntil
 fs:snapshotTime
     a owl:DatatypeProperty ;
     rdfs:domain fs:StateSnapshot ;
-    rdfs:range xsd:dateTime .
+    rdfs:range xsd:dateTime ;
+    rdfs:comment
+        "快照所描述情况对应的日历时刻，不是记录创建时间。只有明确对应实际日期时间时才填写，并注明时区；纯相对时间的模拟情景使用 elapsedSeconds。"@zh .
+
+fs:elapsedSeconds
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:StateSnapshot ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment
+        "快照相对于所属情景起点的时间，单位为秒。本案例以模拟开始时刻为零点，取非负值。同一情景中的所有快照使用相同时间起点。"@zh .

@@ -30,15 +30,21 @@ fs:EgressFunctionalEntity
 
 fs:EgressNode
     a owl:Class ;
-    rdfs:subClassOf fs:EgressFunctionalEntity .
+    rdfs:subClassOf fs:EgressFunctionalEntity ;
+    rdfs:comment
+        "疏散网络中的抽象位置节点，用于表示起点、连接点、转向点或目的地。节点与物理空间或构件相互区分；同一物理空间可以对应多个节点。"@zh .
 
 fs:EgressSegment
     a owl:Class ;
-    rdfs:subClassOf fs:EgressFunctionalEntity .
+    rdfs:subClassOf fs:EgressFunctionalEntity ;
+    rdfs:comment
+        "连接两个疏散节点的路径段。本案例采用无向网络，fromNode 和 toNode 仅用于标识两个端点，不表示单向通行。路段在具体情景下是否可用，由物理条件、运行状态和评估假设共同确定。"@zh .
 
 fs:EgressExit
     a owl:Class ;
-    rdfs:subClassOf fs:EgressNode .
+    rdfs:subClassOf fs:EgressNode ;
+    rdfs:comment
+        "表示通向建筑外部的最终出口节点。到达该节点不自动构成安全性或合规性判断。仅作为局部分析终点的节点，不因此归入此类。"@zh .
 
 
 # ============================================================
