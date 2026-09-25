@@ -61,6 +61,7 @@ fs:sourceObjectIdentifier
 
 fs:ifcGlobalId
     a owl:DatatypeProperty ;
+    rdfs:subPropertyOf fs:sourceObjectIdentifier ;
     rdfs:domain fs:IFCObjectReference ;
     rdfs:range xsd:string .
 

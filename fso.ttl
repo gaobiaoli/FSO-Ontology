@@ -1,0 +1,9 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<https://example.org/fire-ops>
+    a owl:Ontology ;
+    owl:imports
+        <https://example.org/fire-ops/artifact> ,
+        <https://example.org/fire-ops/function> ,
+        <https://example.org/fire-ops/observation> ,
+        <https://example.org/fire-ops/state> .

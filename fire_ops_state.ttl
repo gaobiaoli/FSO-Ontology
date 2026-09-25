@@ -57,7 +57,7 @@ fs:hasObstructingObject
     a owl:ObjectProperty ;
     rdfs:domain fs:ObstructionState .
 
-fs:widthReduction
+fs:clearWidthReduction
     a owl:ObjectProperty ;
     rdfs:domain fs:ObstructionState ;
     rdfs:range qudt:QuantityValue .

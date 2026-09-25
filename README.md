@@ -1,273 +1,97 @@
-# Fire-Ops Ontology Design Principles
+# FSO Ontology
 
-## 1. Purpose
+**FSO (Fire Safety Operations) Ontology** provides a semantic foundation for representing building operational information in support of fire-safety assessment and decision-making.
 
-The Fire-Ops ontology is intended to provide a stable semantic foundation for building fire-safety operation, assessment, and decision support.
+The ontology is intended to connect heterogeneous building information, observations, operational states, functional interpretations, and subsequent assessment processes within a consistent knowledge representation.
 
-Its role is not to replace BIM, IFC, sensing systems, simulation tools, databases, or raw files. Instead, it acts as a **semantic coordination layer** that connects:
+It is not intended to replace BIM/IFC models, simulation tools, sensor systems, databases, or other source data. Instead, the knowledge graph provides a semantic layer through which these resources can be connected, interpreted, queried, and traced.
 
-- building context;
-- operational evidence and observations;
-- time-varying building states;
-- performance-specific functional models;
-- linked source artifacts;
-- future assessment, risk, and decision outputs.
+## Design Scope
 
-The ontology should enable the system to reconstruct and explain, as far as practical:
+The ontology currently distinguishes four main concerns:
 
-> **what the building is, what state it was in, what evidence supported that state, how the state was interpreted for a specific fire-safety function, and how subsequent assessment and decisions were produced.**
+- **Observation** — evidence or observations describing what has been detected or recorded;
+- **State** — time-dependent operational conditions of physical building entities;
+- **Function** — analysis-specific interpretations of how physical entities participate in fire-safety functions;
+- **Artifact** — references between semantic entities and external source data such as IFC models.
 
-The primary service targets are therefore **machine reasoning, performance assessment, decision support, provenance/auditability, and state-aware visualisation**, rather than general-purpose facility management.
+Future assessment, risk, and decision concepts will be introduced only when their required semantics are sufficiently clear.
 
----
+## Core Design Principles
 
-## 2. Core Architectural Principle
+### Separate physical identity, state, and function
 
-The ontology shall maintain clear separation between different kinds of knowledge:
+A physical building entity retains its physical identity independently of its current condition or analytical role.
 
-**Physical Context ≠ Observation/Evidence ≠ Operational State ≠ Functional Interpretation ≠ Assessment/Decision**
+For example, a corridor may realise an evacuation segment, and a chair may temporarily contribute to an obstruction, without either being redefined as those functional or operational concepts.
 
-These layers may be connected, but they should not be collapsed into one another.
+### Represent operational conditions explicitly
 
-A typical information chain is:
+Dynamic building conditions are represented as states rather than being written directly onto otherwise persistent physical entities.
 
-```text
-Source / Evidence
-      ↓
-Observation
-      ↓
-Operational State
-      ↓
-State Snapshot
-      ↓
-Functional Interpretation
-      ↓
-Performance / Risk Assessment
-      ↓
-Decision / Action
-```
+This supports temporal information, provenance, multiple simultaneous conditions, and historical reconstruction.
 
-The same physical building entity may participate in multiple functional interpretations without changing its physical identity.
+### Keep observations and interpreted states distinct
 
----
+Observations describe available evidence. States represent the operational conditions inferred or established from that evidence.
 
-## 3. Design Principles
+This distinction allows different observations or data sources to support the same state while preserving traceability.
 
-### 3.1 Preserve physical identity
+### Treat functional models as analytical representations
 
-A physical entity such as a room, corridor, door, chair, or detector should retain one stable semantic identity.
+Functional entities such as evacuation nodes and segments describe how physical building entities are interpreted for a particular assessment task.
 
-Its identity must not be redefined merely because it temporarily plays another role.
+They should remain distinguishable from the underlying physical building representation.
 
-For example:
+### Link rather than duplicate source information
 
-- a corridor is not inherently an `EgressSegment`;
-- a chair is not inherently an `ObstructionObject`;
-- an object becomes relevant to obstruction through an `ObstructionState`;
-- a physical object may participate in several functional models simultaneously.
+Information already maintained in authoritative source artifacts, such as IFC geometry, should normally remain in those artifacts.
 
-**Identity, role, and state must remain conceptually distinct.**
+The knowledge graph should maintain the semantic identity, relationships, provenance, and references necessary to retrieve and interpret the underlying information.
 
-### 3.2 Represent operational states as contextual conditions
+### Distinguish source information from derived knowledge
 
-An `OperationalState` represents a meaningful time-dependent condition of a physical entity, rather than merely a single property-value record.
+Observed or imported information, interpreted states, functional parameters, assessment results, and decisions should remain distinguishable where this distinction is important for explanation or reproducibility.
 
-A state may therefore contain several related pieces of information, such as:
+### Reuse existing vocabularies where appropriate
 
-- affected entity;
-- involved physical objects;
-- condition-specific values;
-- validity period;
-- supporting observations.
+Established ontologies and standards should be reused when they provide suitable semantics. New FSO concepts should be introduced only where they are necessary for the intended fire-safety operational representation.
 
-This allows a condition such as an obstruction, occupancy condition, or door condition to remain a coherent unit for downstream assessment.
+### Keep the ontology purpose-driven
 
-Simple scalar values may be represented directly as literals. Physical quantities requiring units should use an explicit quantity/unit representation.
+The ontology should remain as simple as possible while supporting the required data representation, queries, reasoning, assessment, visualisation, and decision-support tasks.
 
-### 3.3 Do not equate absence of information with a negative state
+New concepts should be added in response to concrete competency requirements rather than for completeness alone.
 
-The ontology follows an open-world assumption.
-
-Therefore:
-
-> **not recorded ≠ false**
-
-Where operationally important, negative conditions should be represented explicitly.
-
-For example, “confirmed clear” and “no current information” are different states and must remain distinguishable.
-
-### 3.4 Keep observations separate from interpreted states
-
-Observations describe what was observed, by whom or by what process, about which physical entity, and when.
-
-Operational states describe what the system currently considers to be true about the building.
-
-Multiple observations may support one state, and one observation may contribute to several interpreted states.
-
-Evidence provenance should remain traceable rather than being silently absorbed into state values.
-
-### 3.5 Treat functional models as derived, analysis-specific representations
-
-Functional entities such as `EgressNetwork`, `EgressNode`, and `EgressSegment` are not substitutes for BIM objects.
-
-They represent how physical building entities participate in a particular performance analysis.
-
-Functional models should therefore be considered **derived analytical representations** built from physical context and relevant domain knowledge.
-
-The same physical object may support different functional interpretations for evacuation, compartmentation, detection, suppression, smoke control, or other analyses.
-
-The operational state layer should remain independent of any single functional model.
-
-### 3.6 Do not duplicate authoritative source data unnecessarily
-
-Heavy or authoritative source information should remain in its native artifact whenever practical.
-
-Examples include:
-
-- IFC geometry;
-- images and video;
-- point clouds;
-- meshes;
-- simulation files;
-- detailed documents.
-
-The KG should primarily store semantic identity, relationships, state, provenance, version information, and references required to retrieve or reconstruct these artifacts.
-
-Derived or lightweight information may be stored in the KG when it is required for reasoning, querying, reproducibility, or decision support.
-
-### 3.7 Make source references reproducible
-
-A semantic entity should be able to refer back to the exact source artifact and source object from which it was obtained.
-
-The design should therefore distinguish:
-
-```text
-semantic entity
-    ↓
-source object reference
-    ↓
-specific source artifact version
-```
-
-Source references should support versioning and stable object identifiers where available, such as IFC `GlobalId`.
-
-A file path alone is not sufficient provenance. Artifact version and integrity information should be retained when reproducibility matters.
-
-### 3.8 Separate observed facts from derived information
-
-The ontology must distinguish between:
-
-- directly observed or imported information;
-- inferred operational state;
-- function-specific derived parameters;
-- assessment outputs;
-- risk interpretation;
-- recommended actions.
-
-For example, an object's geometry or current location may be observed, while `effectiveWidth`, route dependency, or risk significance may be derived.
-
-Derived values should not be represented as raw physical facts without provenance describing how they were produced.
-
-### 3.9 Reuse established ontologies before creating new vocabulary
-
-New Fire-Ops concepts should only be introduced where existing standards do not adequately express the intended semantics.
-
-Current preferred external vocabularies include:
-
-- **BOT** for building topology and spatial context;
-- **SOSA/SSN** for observations and sensing;
-- **PROV-O** for provenance and derivation;
-- **QUDT** for physical quantities and units;
-- **GeoSPARQL** where explicit spatial geometry or spatial relations are genuinely required.
-
-Reuse should remain selective. Importing a large ontology does not by itself improve the model.
-
-### 3.10 Keep ontology semantics separate from validation rules
-
-OWL/RDFS statements such as `rdfs:domain`, `rdfs:range`, and `rdfs:subClassOf` define semantic meaning and support inference.
-
-They should not be treated as data-entry constraints.
-
-Requirements such as:
-
-- exactly one affected entity;
-- mandatory evidence;
-- valid numeric ranges;
-- required units;
-
-should be expressed separately using **SHACL** when validation is introduced.
-
-### 3.11 Prefer derived knowledge over duplicated knowledge
-
-Information that can be reliably derived from existing graph relationships should not automatically be stored again.
-
-For example, if an `ObstructionState` refers to a corridor and an `EgressSegment` is realised by that corridor, the affected segment may be obtained through query or interpretation rather than stored as a permanent direct link.
-
-Materialisation should only be introduced when it provides a clear benefit for performance, auditability, or persistence of a specific historical interpretation.
-
-### 3.12 Model only what serves a competency need
-
-The ontology should not expand simply to appear comprehensive.
-
-A new class, property, or module should be introduced only when it is required to:
-
-- represent real data;
-- answer a defined competency question;
-- support a calculation or reasoning step;
-- preserve provenance;
-- enable reconstruction or visualisation;
-- support a required decision.
-
-Prototype simplicity is preferred over speculative completeness.
-
----
-
-## 4. Module Responsibilities
-
-The ontology is modular by concern.
+## Current Modules
 
 ```text
 fire_ops_observation.ttl
-    Observation vocabulary and evidence semantics
+    Observation and evidence-related vocabulary
 
 fire_ops_state.ttl
-    Time-varying operational conditions and state snapshots
+    Operational states and state snapshots
 
 fire_ops_function.ttl
-    Performance-specific functional representations
+    Fire-safety functional and analytical representations
 
 fire_ops_artifact.ttl
-    References to source files, model versions, and source objects
+    Links between semantic entities and external source artifacts
 ```
 
-Future modules such as assessment, risk, and action should only be added when their semantics and required competency questions are sufficiently clear.
+## Extension Principle
 
-Modules may share the Fire-Ops namespace while remaining logically separated.
+When extending the ontology, first determine whether the new information represents:
 
----
+```text
+physical context
+observation
+operational state
+functional interpretation
+source artifact
+derived assessment or decision
+```
 
-## 5. Extension Rule
+The new concept should be placed in the appropriate layer without unnecessarily duplicating information already represented elsewhere.
 
-Before extending the ontology, the following questions should be answered in order:
-
-1. **What real-world or analytical concept is missing?**
-2. **Is it a physical entity, observation, state, functional role, derived result, or artifact reference?**
-3. **Does an established ontology already represent it adequately?**
-4. **Does the new concept have a clear competency question or system use?**
-5. **Can the information already be derived from existing knowledge?**
-6. **Will the new concept preserve the separation between identity, state, function, evidence, and derived knowledge?**
-7. **Can historical states and previous decisions still be reconstructed after this change?**
-
-If these questions cannot be answered clearly, the ontology should not yet be extended.
-
----
-
-## 6. Long-Term Design Goal
-
-The ontology should remain sufficiently lightweight to evolve, but sufficiently explicit to support the following principle:
-
-> **A Fire-Ops KG together with its linked and versioned source artifacts should contain enough semantic and provenance information to reconstruct the relevant building context, operational state, analytical interpretation, visualisation, and decision pathway for a given point in time.**
-
-The ontology is therefore not intended to contain all data.
-
-It is intended to make the distributed data, models, states, and reasoning processes **connected, interpretable, reproducible, and usable for fire-safety assessment and decision support**.
+The ontology is expected to evolve with the research. Its architecture should therefore remain modular, traceable, and sufficiently lightweight to accommodate new fire-safety scenarios and assessment methods.

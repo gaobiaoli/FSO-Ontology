@@ -17,8 +17,12 @@
 fs:FunctionalEntity
     a owl:Class .
 
-fs:EgressNetwork
+fs:FunctionalModel
     a owl:Class .
+
+fs:EgressNetwork
+    a owl:Class ;
+    rdfs:subClassOf fs:FunctionalModel .
 
 fs:EgressFunctionalEntity
     a owl:Class ;
