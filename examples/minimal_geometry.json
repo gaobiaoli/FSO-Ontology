@@ -1,0 +1,77 @@
+{
+  "schema_version": "minimal-example-1",
+  "data_kind": "synthetic_assumption",
+  "description": "合成的二维示例，用于检查本体实例与几何引用，不对应真实建筑或现场观测。",
+  "scenario_id": "minimal-obstructed",
+  "snapshot_uri": "https://example.org/fire-ops/example/minimal#snapshot",
+  "elapsed_seconds": 0,
+  "coordinate_reference": {
+    "id": "https://example.org/fire-ops/example/minimal#local-frame",
+    "description": "仅属于本示例的平面坐标系；原点为走廊左下角，x 轴沿走廊向右，y 轴向上；所有几何均已定位到此坐标系。",
+    "dimension": 2,
+    "length_unit": "m"
+  },
+  "reference_convention": "TTL 的 artifactLocation 相对于 TTL 所在目录解析；sourceObjectIdentifier 对应本文件 records 对象中的键。",
+  "assumptions": [
+    "房间与走廊位于同一水平面。",
+    "房间与走廊在 x=0、0.5<=y<=1.5 处有一个开放通口；本例不单独建模门或墙。",
+    "网络采用无向连接，路段中心线是本示例给定的分析路径。",
+    "终点仅为走廊右端的局部分析终点，不是建筑最终出口。",
+    "障碍轮廓为当前情景中推车的平面占据范围，不含模型额外设置的人体尺寸或侧边留量。"
+  ],
+  "network": {
+    "uri": "https://example.org/fire-ops/example/minimal#network",
+    "directed": false,
+    "start_node_uri": "https://example.org/fire-ops/example/minimal#roomNode",
+    "destination_node_uri": "https://example.org/fire-ops/example/minimal#targetNode"
+  },
+  "records": {
+    "room": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#room",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-4, 0], [0, 0], [0, 2], [-4, 2], [-4, 0]]]
+      }
+    },
+    "corridor": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#corridor",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [10, 0], [10, 2], [0, 2], [0, 0]]]
+      }
+    },
+    "room-node": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#roomNode",
+      "geometry": {"type": "Point", "coordinates": [-2, 1]}
+    },
+    "junction-node": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#junctionNode",
+      "geometry": {"type": "Point", "coordinates": [0, 1]}
+    },
+    "target-node": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#targetNode",
+      "geometry": {"type": "Point", "coordinates": [10, 1]}
+    },
+    "room-segment": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#roomSegment",
+      "geometry": {"type": "LineString", "coordinates": [[-2, 1], [0, 1]]}
+    },
+    "corridor-segment": {
+      "entity_uri": "https://example.org/fire-ops/example/minimal#corridorSegment",
+      "geometry": {"type": "LineString", "coordinates": [[0, 1], [10, 1]]}
+    },
+    "obstruction-state": {
+      "state_uri": "https://example.org/fire-ops/example/minimal#obstructionState",
+      "space_uri": "https://example.org/fire-ops/example/minimal#corridor",
+      "obstacles": [
+        {
+          "object_uri": "https://example.org/fire-ops/example/minimal#cart",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[4.5, 0], [5.5, 0], [5.5, 0.6], [4.5, 0.6], [4.5, 0]]]
+          }
+        }
+      ]
+    }
+  }
+}

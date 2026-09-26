@@ -1,0 +1,129 @@
+@prefix ex:   <https://example.org/fire-ops/example/minimal#> .
+@prefix fs:   <https://example.org/fire-ops#> .
+@prefix bot:  <https://w3id.org/bot#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+ex:room
+    a bot:Space ;
+    rdfs:label "示例房间"@zh ;
+    fs:hasSourceReference ex:roomGeometryRef .
+
+ex:corridor
+    a bot:Space ;
+    rdfs:label "示例走廊"@zh ;
+    fs:hasSourceReference ex:corridorGeometryRef .
+
+ex:cart
+    a bot:Element ;
+    rdfs:label "示例推车"@zh ;
+    rdfs:comment "假设的可移动物体；本情景中的位置与轮廓通过障碍状态引用，不作为物体永久位置保存。"@zh .
+
+ex:snapshot
+    a fs:StateSnapshot ;
+    rdfs:label "有障碍情景，t=0"@zh ;
+    rdfs:comment "人工构造的假设情景，不是现场观测。房间 5 人、走廊 0 人；状态仅在本快照参考时刻被采用，不自动延长有效期。"@zh ;
+    fs:scenarioId "minimal-obstructed" ;
+    fs:elapsedSeconds "0"^^xsd:decimal ;
+    fs:hasState ex:roomOccupancy, ex:corridorOccupancy, ex:obstructionState .
+
+ex:roomOccupancy
+    a fs:OccupancyState ;
+    fs:aboutEntity ex:room ;
+    fs:occupantCount "5"^^xsd:nonNegativeInteger .
+
+ex:corridorOccupancy
+    a fs:OccupancyState ;
+    fs:aboutEntity ex:corridor ;
+    fs:occupantCount "0"^^xsd:nonNegativeInteger .
+
+ex:obstructionState
+    a fs:ObstructionState ;
+    fs:aboutEntity ex:corridor ;
+    fs:obstructionPresent true ;
+    fs:hasObstructingObject ex:cart ;
+    fs:obstructionGeometryReference ex:obstructionGeometryRef ;
+    rdfs:comment "推车在本情景中靠走廊下侧墙放置。截面、净宽与容量不存为状态事实；需要时由几何和明确的计算规则生成。"@zh .
+
+ex:network
+    a fs:EgressNetwork ;
+    rdfs:label "房间至走廊右端的最小分析网络"@zh ;
+    rdfs:comment "人工给定的无向示例网络，依次为 roomNode、junctionNode、targetNode。目标仅是本例局部终点；不表示已完成建筑疏散。本例尚未建立评估运行或计算疏散时间。"@zh ;
+    fs:hasNode ex:roomNode, ex:junctionNode, ex:targetNode ;
+    fs:hasSegment ex:roomSegment, ex:corridorSegment .
+
+ex:roomNode
+    a fs:EgressNode ;
+    rdfs:label "房间代表起点"@zh ;
+    fs:hasSourceReference ex:roomNodeGeometryRef .
+
+ex:junctionNode
+    a fs:EgressNode ;
+    rdfs:label "房间与走廊的开放通口"@zh ;
+    fs:hasSourceReference ex:junctionNodeGeometryRef .
+
+ex:targetNode
+    a fs:EgressNode ;
+    rdfs:label "走廊右端的局部分析终点"@zh ;
+    fs:hasSourceReference ex:targetNodeGeometryRef .
+
+ex:roomSegment
+    a fs:EgressSegment ;
+    fs:fromNode ex:roomNode ;
+    fs:toNode ex:junctionNode ;
+    fs:realizedBy ex:room ;
+    fs:hasSourceReference ex:roomSegmentGeometryRef .
+
+ex:corridorSegment
+    a fs:EgressSegment ;
+    fs:fromNode ex:junctionNode ;
+    fs:toNode ex:targetNode ;
+    fs:realizedBy ex:corridor ;
+    fs:hasSourceReference ex:corridorSegmentGeometryRef .
+
+ex:geometryArtifact
+    a fs:SourceArtifact ;
+    rdfs:label "最小实例的合成几何文件"@zh ;
+    rdfs:comment "artifactLocation 相对于本 TTL 所在目录解析；sourceObjectIdentifier 精确匹配 JSON 的 records 键。此文件不是 IFC 文件。修改 JSON 后需重新计算 sha256。"@zh ;
+    fs:artifactLocation "minimal_geometry.json"^^xsd:anyURI ;
+    fs:sha256 "eded47d152afe70bd4f09efe01ebedc7379cb9f24d6e9914ff2fc027557a35a1" .
+
+ex:roomGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "room" .
+
+ex:corridorGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "corridor" .
+
+ex:roomNodeGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "room-node" .
+
+ex:junctionNodeGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "junction-node" .
+
+ex:targetNodeGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "target-node" .
+
+ex:roomSegmentGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "room-segment" .
+
+ex:corridorSegmentGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "corridor-segment" .
+
+ex:obstructionGeometryRef
+    a fs:SourceObjectReference ;
+    fs:referencesArtifact ex:geometryArtifact ;
+    fs:sourceObjectIdentifier "obstruction-state" .

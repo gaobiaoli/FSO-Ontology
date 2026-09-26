@@ -32,13 +32,13 @@ fs:EgressNode
     a owl:Class ;
     rdfs:subClassOf fs:EgressFunctionalEntity ;
     rdfs:comment
-        "疏散网络中的抽象位置节点，用于表示起点、连接点、转向点或目的地。节点与物理空间或构件相互区分；同一物理空间可以对应多个节点。"@zh .
+        "疏散网络中的抽象位置节点，用于表示起点、连接点、转向点或目的地。节点与物理空间或构件相互区分；同一物理空间可以对应多个节点。需要精确定位时，可通过 hasSourceReference 引用外部节点位置记录，记录应明确坐标基准和单位；仅关联物理空间不能唯一确定节点在空间内的位置。"@zh .
 
 fs:EgressSegment
     a owl:Class ;
     rdfs:subClassOf fs:EgressFunctionalEntity ;
     rdfs:comment
-        "连接两个疏散节点的路径段。本案例采用无向网络，fromNode 和 toNode 仅用于标识两个端点，不表示单向通行。路段在具体情景下是否可用，由物理条件、运行状态和评估假设共同确定。"@zh .
+        "连接两个疏散节点的路径段。本案例采用无向网络，fromNode 和 toNode 仅用于标识两个端点，不表示单向通行。路段在具体情景下是否可用，由物理条件、运行状态和评估假设共同确定。两个端点不唯一确定空间中的实际路径；需要保存具体路径几何时，可通过 hasSourceReference 引用外部记录，并明确坐标基准和单位。"@zh .
 
 fs:EgressExit
     a owl:Class ;
@@ -78,4 +78,6 @@ fs:toNode
 
 fs:realizedBy
     a owl:ObjectProperty ;
-    rdfs:domain fs:FunctionalEntity .
+    rdfs:domain fs:FunctionalEntity ;
+    rdfs:comment
+        "关联承载该功能实体的物理空间或构件，例如承载通行路段的走廊或门。该关系表示功能与物理对象之间的对应，不直接表达节点坐标或路段路径，也不保证该物理对象在当前情景下可通行。"@zh .

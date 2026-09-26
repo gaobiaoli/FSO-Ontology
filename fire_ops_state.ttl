@@ -2,7 +2,7 @@
 @prefix sosa: <http://www.w3.org/ns/sosa/> .
 @prefix qudt: <http://qudt.org/schema/qudt/> .
 @prefix unit: <http://qudt.org/vocab/unit/> .
-
+@prefix bot:  <https://w3id.org/bot#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
@@ -16,7 +16,9 @@
 # ============================================================
 
 fs:OperationalState
-    a owl:Class .
+    a owl:Class ;
+    rdfs:comment
+        "描述对象在特定适用条件下的运行情况。需要同时保留不同时刻或情景中的不同状态值、依据或适用条件时，应使用不同状态实例；快照对状态的引用不会使同一状态实例的属性按快照分别取值。若对象、状态值、依据和适用条件一致，且该状态适用于各快照的参考时刻和情景，可以由多个快照复用；仅数值相同不足以判断可以复用。"@zh .
 
 fs:OccupancyState
     a owl:Class ;
@@ -43,6 +45,14 @@ fs:scenarioId
     rdfs:range xsd:string ;
     rdfs:comment
         "标识快照所属的情景。同一情景可以包含多个时刻的快照；不同假设方案使用不同标识。标识在本项目内保持唯一且含义稳定。"@zh .
+
+fs:stateBasis
+    a owl:DatatypeProperty ;
+    rdfs:domain fs:OperationalState ;
+    rdfs:range xsd:string ;
+    rdfs:comment
+        "说明该状态值的形成依据。约定使用 observed（采用观测结果）、assumed（人为设定的假设）或 inferred（通过计算或推理生成）。该标记不表示准确度，也不替代具体的观测、来源或推导记录；未填写时不默认归为任何类别。"@zh .
+
 # ============================================================
 # State relationships
 # ============================================================
@@ -56,12 +66,16 @@ fs:aboutEntity
 fs:supportedByObservation
     a owl:ObjectProperty ;
     rdfs:domain fs:OperationalState ;
-    rdfs:range sosa:Observation .
+    rdfs:range sosa:Observation ;
+    rdfs:comment
+        "关联为该状态提供依据的观测，可用于直接采用观测结果的状态，也可用于经过处理、融合或推断形成的状态。该关系不自动表示状态值与某次观测结果相同，不自动确定 stateBasis 的取值，也不要求状态有效期等于观测所对应的时间；缺少该关系不表示状态必为人工假设。具体采用方式或推导过程需另行记录。"@zh .
 
 fs:hasState
     a owl:ObjectProperty ;
     rdfs:domain fs:StateSnapshot ;
-    rdfs:range fs:OperationalState .
+    rdfs:range fs:OperationalState ;
+    rdfs:comment
+        "关联该快照在其参考时刻采用的运行状态。该关系不自动声明状态在其他时刻也有效，也不证明状态已被观测证实。若另有可与快照参考时刻比较的有效时间边界，采用该状态不应违反这些边界。"@zh .
 
 fs:hasObstructingObject
     a owl:ObjectProperty ;
@@ -90,6 +104,13 @@ fs:obstructionGeometryReference
     rdfs:comment
         "关联外部文件中描述该状态下障碍空间占据情况的几何记录。记录应包含障碍轮廓及其空间定位，并明确坐标基准和单位。几何对应当前状态的时间与情景，不默认采用物体在原始 IFC 中的位置。"@zh .
 
+fs:hasScopeSpace
+    a owl:ObjectProperty ;
+    rdfs:domain fs:StateSnapshot ;
+    rdfs:range bot:Space ;
+    rdfs:comment
+        "声明该快照预期描述的物理空间，可以关联多个空间。范围内缺少某类状态记录，不表示该状态为零或不存在，也不表示快照中的信息已经完整。"@zh .
+
 # ============================================================
 # State values
 # ============================================================
@@ -112,12 +133,16 @@ fs:obstructionPresent
 fs:validFrom
     a owl:DatatypeProperty ;
     rdfs:domain fs:OperationalState ;
-    rdfs:range xsd:dateTime .
+    rdfs:range xsd:dateTime ;
+    rdfs:comment
+        "该状态被声明适用的日历时间起点，包含此时刻。不是记录创建时间，也不必等于观测结果生成时间。填写时注明时区；未填写表示未声明起点，不自动表示向过去无限延伸。"@zh .
 
 fs:validUntil
     a owl:DatatypeProperty ;
     rdfs:domain fs:OperationalState ;
-    rdfs:range xsd:dateTime .
+    rdfs:range xsd:dateTime ;
+    rdfs:comment
+        "该状态被声明适用的日历时间终点，不包含此时刻。填写时注明时区；未填写表示未声明终点，不自动表示持续有效。起止时间均填写时，起点应早于终点。"@zh .
 
 fs:snapshotTime
     a owl:DatatypeProperty ;
